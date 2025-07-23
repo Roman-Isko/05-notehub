@@ -1,58 +1,71 @@
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
+import { Formik, Form, Field, ErrorMessage as FormikError } from "formik";
+import * as Yup from "yup";
 import { createNote } from "../../services/noteService";
-import type { NoteTag } from "../../types/note";
+import type { NoteTag, NoteCreateData } from "../../types/note";
+import type { FormikHelpers } from "formik";
 
 const validationSchema = Yup.object({
   title: Yup.string().required(),
-  content: Yup.string().required(),
-  tag: Yup.string().oneOf(["personal", "work", "study", "other"]).required(),
+  text: Yup.string().required("Text is required"),
+  tag: Yup.mixed<NoteTag>()
+    .oneOf(["personal", "work", "study", "other"])
+    .required(),
 });
+
+const initialValues: NoteCreateData = {
+  title: "",
+  text: "",
+  tag: "personal",
+};
 
 const NoteForm = () => {
   const queryClient = useQueryClient();
-
   const mutation = useMutation({
     mutationFn: createNote,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notes"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+    },
   });
 
-  const formik = useFormik({
-    initialValues: {
-      title: "",
-      content: "",
-      tag: "personal" as NoteTag,
-    },
-    validationSchema,
-    onSubmit: (values) => mutation.mutate(values),
-  });
+  const handleSubmit = (
+    values: NoteCreateData,
+    { resetForm }: FormikHelpers<NoteCreateData>
+  ) => {
+    mutation.mutate(values);
+    resetForm();
+  };
 
   return (
-    <form onSubmit={formik.handleSubmit}>
-      <input
-        name="title"
-        value={formik.values.title}
-        onChange={formik.handleChange}
-      />
-      <textarea
-        name="content"
-        value={formik.values.content}
-        onChange={formik.handleChange}
-      />
-      <select
-        name="tag"
-        value={formik.values.tag}
-        onChange={formik.handleChange}
-      >
-        <option value="personal">Personal</option>
-        <option value="work">Work</option>
-        <option value="study">Study</option>
-        <option value="other">Other</option>
-      </select>
-      <button type="submit">Create</button>
-    </form>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+    >
+      <Form>
+        <div>
+          <label>Title</label>
+          <Field name="title" />
+          <FormikError name="title" component="div" />
+        </div>
+        <div>
+          <label>Text</label>
+          <Field name="content" as="textarea" />
+          <FormikError name="content" component="div" />
+        </div>
+        <div>
+          <label>Tag</label>
+          <Field name="tag" as="select">
+            <option value="personal">Personal</option>
+            <option value="work">Work</option>
+            <option value="study">Study</option>
+            <option value="other">Other</option>
+          </Field>
+          <FormikError name="tag" component="div" />
+        </div>
+        <button type="submit">Add Note</button>
+      </Form>
+    </Formik>
   );
 };
 

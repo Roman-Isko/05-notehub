@@ -11,7 +11,7 @@ const NoteList = ({ notes }: NoteListProps) => {
       {notes.map((note) => (
         <li key={note.id} className={styles.card}>
           <h3>{note.title}</h3>
-          <p>{note.content}</p>
+          <p>{note.text}</p>
           <span className={styles.tag}>{note.tag}</span>
         </li>
       ))}
@@ -20,25 +20,3 @@ const NoteList = ({ notes }: NoteListProps) => {
 };
 
 export default NoteList;
-
-// import type { FC } from "react";
-// import type { Note } from "../../types/note";
-// import NoteCard from "../NoteCard/NoteCard";
-
-// interface NoteListProps {
-//   notes: Note[];
-// }
-
-// const NoteList: FC<NoteListProps> = ({ notes }) => {
-//   return (
-//     <ul>
-//       {notes.map((note) => (
-//         <li key={note.id}>
-//           <NoteCard note={note} />
-//         </li>
-//       ))}
-//     </ul>
-//   );
-// };
-
-// export default NoteList;
