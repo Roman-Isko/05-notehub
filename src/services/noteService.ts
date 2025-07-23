@@ -20,5 +20,3 @@ export const createNote = async (noteData: { title: string; text: string }) => {
   const response = await instance.post("/notes", noteData);
   return response.data;
 };
-
-console.log("TOKEN:", import.meta.env.VITE_NOTEHUB_TOKEN);
