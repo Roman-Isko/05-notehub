@@ -1,5 +1,5 @@
 import type { Note } from "../../types/note";
-import styles from "./NoteList.module.css";
+import css from "./NoteList.module.css";
 
 interface NoteListProps {
   notes: Note[];
@@ -7,12 +7,12 @@ interface NoteListProps {
 
 const NoteList = ({ notes }: NoteListProps) => {
   return (
-    <ul className={styles.list}>
+    <ul className={css.list}>
       {notes.map((note) => (
-        <li key={note.id} className={styles.card}>
+        <li key={note.id} className={css.card}>
           <h3>{note.title}</h3>
           <p>{note.text}</p>
-          <span className={styles.tag}>{note.tag}</span>
+          <span className={css.tag}>{note.tag}</span>
         </li>
       ))}
     </ul>

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import css from "./Modal.module.css";
 import ReactDOM from "react-dom";
 import type { FC, ReactNode } from "react";
 
@@ -18,8 +19,8 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="css.backdrop" onClick={onClose}>
+      <div className="css.content" onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose}>✕</button>
         {children}
       </div>

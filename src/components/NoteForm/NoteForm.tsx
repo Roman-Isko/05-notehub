@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import css from "./NoteForm.module.css";
 import { Formik, Form, Field, ErrorMessage as FormikError } from "formik";
 import * as Yup from "yup";
 import { createNote } from "../../services/noteService";
@@ -50,8 +51,8 @@ const NoteForm = () => {
         </div>
         <div>
           <label>Text</label>
-          <Field name="content" as="textarea" />
-          <FormikError name="content" component="div" />
+          <Field name="text" as="textarea" />
+          <FormikError name="text" component="div" />
         </div>
         <div>
           <label>Tag</label>

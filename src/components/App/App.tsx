@@ -1,8 +1,10 @@
 import { useState } from "react";
+import css from "./App.module.css";
 import { useQuery } from "@tanstack/react-query";
 import { getNotes } from "../../services/noteService";
 
 import NoteForm from "../NoteForm/NoteForm";
+import NoteList from "../NoteList/NoteList";
 import SearchBox from "../SearchBox/SearchBox";
 import Pagination from "../Pagination/Pagination";
 import Loader from "../Loader/Loader";
@@ -32,9 +34,7 @@ const App = () => {
       <h1>NoteHub</h1>
       <NoteForm />
       <SearchBox onSearch={setSearch} />
-      {filteredNotes.map((note: Note) => (
-        <p key={note.id}>{note.title}</p>
-      ))}
+      <NoteList notes={filteredNotes} />
       <Pagination
         currentPage={page}
         totalPages={data?.totalPages || 1}
@@ -45,3 +45,8 @@ const App = () => {
 };
 
 export default App;
+
+
+
+
+
