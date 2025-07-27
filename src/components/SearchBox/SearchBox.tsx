@@ -1,19 +1,41 @@
-import type { FC } from "react";
 import css from "./SearchBox.module.css";
 
-interface SearchBoxProps {
-  onSearch: (value: string) => void;
+interface Props {
+  value: string;
+  onChange: (value: string) => void;
 }
 
-const SearchBox: FC<SearchBoxProps> = ({ onSearch }) => {
+export default function SearchBox({ value, onChange }: Props) {
   return (
     <input
-      type="text"
       className={css.input}
-      placeholder="Search notes..."
-      onChange={(e) => onSearch(e.target.value)}
+      type="text"
+      placeholder="Search notes"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
     />
   );
-};
+}
 
-export default SearchBox;
+// import css from "./SearchBox.module.css";
+
+// interface Props {
+//   value: string;
+//   onChange: (value: string) => void;
+// }
+
+// export default function SearchBox({ value, onChange }: Props) {
+//   return (
+//     <div className={css.searchBox}>
+//       <label>
+//         Search:
+//         <input
+//           type="text"
+//           value={value}
+//           onChange={(e) => onChange(e.target.value)}
+//           className={css.input}
+//         />
+//       </label>
+//     </div>
+//   );
+// }

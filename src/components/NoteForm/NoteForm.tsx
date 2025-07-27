@@ -1,73 +1,128 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import css from "./NoteForm.module.css";
-import { Formik, Form, Field, ErrorMessage as FormikError } from "formik";
+import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import { createNote } from "../../services/noteService";
-import type { NoteTag, NoteCreateData } from "../../types/note";
-import type { FormikHelpers } from "formik";
+import css from "./NoteForm.module.css";
+import type { CreateNoteData } from "../../services/noteService";
+
+const tags = ["Todo", "Work", "Personal", "Meeting", "Shopping"] as const;
 
 const validationSchema = Yup.object({
-  title: Yup.string().required(),
-  text: Yup.string().required("Text is required"),
-  tag: Yup.mixed<NoteTag>()
-    .oneOf(["personal", "work", "study", "other"])
-    .required(),
+  title: Yup.string().required("Required"),
+  content: Yup.string().required("Required"),
+  tag: Yup.string().oneOf(tags).required("Required"),
 });
 
-const initialValues: NoteCreateData = {
+interface Props {
+  onSubmit: (values: CreateNoteData) => void;
+}
+
+const initialValues: CreateNoteData = {
   title: "",
-  text: "",
-  tag: "personal",
+  content: "",
+  tag: "Todo",
 };
 
-const NoteForm = () => {
-  const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: createNote,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
-    },
-  });
-
-  const handleSubmit = (
-    values: NoteCreateData,
-    { resetForm }: FormikHelpers<NoteCreateData>
-  ) => {
-    mutation.mutate(values);
-    resetForm();
-  };
-
+export default function NoteForm({ onSubmit }: Props) {
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={handleSubmit}
+      onSubmit={(values, actions) => {
+        onSubmit(values);
+        actions.resetForm();
+      }}
     >
-      <Form>
-        <div>
-          <label>Title</label>
-          <Field name="title" />
-          <FormikError name="title" component="div" />
-        </div>
-        <div>
-          <label>Text</label>
-          <Field name="text" as="textarea" />
-          <FormikError name="text" component="div" />
-        </div>
-        <div>
-          <label>Tag</label>
-          <Field name="tag" as="select">
-            <option value="personal">Personal</option>
-            <option value="work">Work</option>
-            <option value="study">Study</option>
-            <option value="other">Other</option>
-          </Field>
-          <FormikError name="tag" component="div" />
-        </div>
-        <button type="submit">Add Note</button>
-      </Form>
+      {({ errors, touched }) => (
+        <Form className={css.form}>
+          <label>
+            Title
+            <Field name="title" className={css.input} />
+            {errors.title && touched.title && (
+              <div className={css.error}>{errors.title}</div>
+            )}
+          </label>
+
+          <label>
+            Content
+            <Field name="content" as="textarea" className={css.textarea} />
+            {errors.content && touched.content && (
+              <div className={css.error}>{errors.content}</div>
+            )}
+          </label>
+
+          <label>
+            Tag
+            <Field name="tag" as="select" className={css.select}>
+              {tags.map((tag) => (
+                <option key={tag} value={tag}>
+                  {tag}
+                </option>
+              ))}
+            </Field>
+            {errors.tag && touched.tag && (
+              <div className={css.error}>{errors.tag}</div>
+            )}
+          </label>
+
+          <button type="submit" className={css.button}>
+            Create note
+          </button>
+        </Form>
+      )}
     </Formik>
   );
-};
+}
 
-export default NoteForm;
+// import { useState } from "react";
+// import css from "./NoteForm.module.css";
+
+// interface NoteFormProps {
+//   onAdd: (note: { title: string; text: string; tag: string }) => void;
+// }
+
+// const NoteForm = ({ onAdd }: NoteFormProps) => {
+//   const [title, setTitle] = useState("");
+//   const [text, setText] = useState("");
+//   const [tag, setTag] = useState("");
+
+//   const handleSubmit = (e: React.FormEvent) => {
+//     e.preventDefault();
+//     if (!title || !text || !tag) return;
+//     onAdd({ title, text, tag });
+//     setTitle("");
+//     setText("");
+//     setTag("");
+//   };
+
+//   return (
+//     <form className={css.form} onSubmit={handleSubmit}>
+//       <input
+//         className={css.input}
+//         type="text"
+//         placeholder="Title"
+//         value={title}
+//         onChange={(e) => setTitle(e.target.value)}
+//       />
+//       <textarea
+//         className={css.textarea}
+//         placeholder="Text"
+//         value={text}
+//         onChange={(e) => setText(e.target.value)}
+//       />
+//       <input
+//         className={css.input}
+//         type="text"
+//         placeholder="Tag"
+//         value={tag}
+//         onChange={(e) => setTag(e.target.value)}
+//       />
+//       <button className={css.button} type="submit">
+//         Create Note
+//       </button>
+//       <button className={css.button} type="button">
+//         Cancel
+//       </button>
+//     </form>
+//   );
+// };
+
+// export default NoteForm;
