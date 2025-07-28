@@ -4,23 +4,23 @@ import toast from "react-hot-toast";
 import css from "./SearchBox.module.css";
 
 interface SearchBoxProps {
-  value: string;
-  onChange: (value: string) => void;
+  onSearch: (query: string) => void;
 }
 
-export default function SearchBox({ value, onChange }: SearchBoxProps) {
-  const [inputValue, setInputValue] = useState(value);
+export default function SearchBox({ onSearch }: SearchBoxProps) {
+  const [inputValue, setInputValue] = useState("");
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       const trimmed = inputValue.trim();
 
       if (!trimmed) {
-        toast.error("Enter text to search!");
+        toast.error("Введи текст для пошуку!");
         return;
       }
 
-      onChange(trimmed);
+      onSearch(trimmed);
+      setInputValue("");
     }
   };
 

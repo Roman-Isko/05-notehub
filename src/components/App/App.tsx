@@ -35,7 +35,8 @@ function App() {
   return (
     <div className={css.container}>
       <Toaster />
-      <SearchBox value={search} onChange={setSearch} />
+      <SearchBox onSearch={(query) => setSearch(query)} />
+
       <button onClick={() => setIsOpen(true)} className={css.button}>
         Create note+
       </button>
