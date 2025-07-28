@@ -25,6 +25,7 @@ function App() {
   const { data, isPending, isError } = useQuery({
     queryKey: ["notes", page, debouncedSearch],
     queryFn: () => fetchNotes(page + 1, debouncedSearch),
+    placeholderData: (prev) => prev ?? undefined, // ✅ Уникнути миготіння
   });
 
   const mutation = useMutation({
@@ -60,7 +61,10 @@ function App() {
 
       {isOpen && (
         <Modal onClose={() => setIsOpen(false)}>
-          <NoteForm onSubmit={mutation.mutate} />
+          <NoteForm
+            onSubmit={mutation.mutate}
+            onCancel={() => setIsOpen(false)}
+          />
         </Modal>
       )}
     </div>

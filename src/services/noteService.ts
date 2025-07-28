@@ -25,16 +25,17 @@ export const fetchNotes = async (
 ): Promise<FetchNotesResponse> => {
   const params: Record<string, unknown> = { page, perPage: 12 };
   if (search) params.search = search;
-  const res = await instance.get("/notes", { params });
+  const res = await instance.get<FetchNotesResponse>("/notes", { params }); // ✅ тип відповіді
   return res.data;
 };
 
 export const createNote = async (data: CreateNoteData): Promise<Note> => {
-  const res = await instance.post("/notes", data);
+  const res = await instance.post<Note>("/notes", data); // ✅ тип відповіді
   return res.data;
 };
 
-export const deleteNote = async (id: string): Promise<Note> => {
-  const res = await instance.delete(`/notes/${id}`);
+export const deleteNote = async (id: number): Promise<Note> => {
+  // 🔁 id: number
+  const res = await instance.delete<Note>(`/notes/${id}`); // ✅ тип відповіді
   return res.data;
 };

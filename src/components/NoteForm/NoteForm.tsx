@@ -7,12 +7,13 @@ const tags = ["Todo", "Work", "Personal", "Meeting", "Shopping"] as const;
 
 const validationSchema = Yup.object({
   title: Yup.string().required("Required"),
-  content: Yup.string().required("Required"),
+  content: Yup.string().max(500), // 🔁 стало необов’язковим
   tag: Yup.string().oneOf(tags).required("Required"),
 });
 
-interface Props {
+interface NoteFormProps {
   onSubmit: (values: CreateNoteData) => void;
+  onCancel: () => void; // ✅ Додано
 }
 
 const initialValues: CreateNoteData = {
@@ -21,7 +22,7 @@ const initialValues: CreateNoteData = {
   tag: "Todo",
 };
 
-export default function NoteForm({ onSubmit }: Props) {
+export default function NoteForm({ onSubmit, onCancel }: NoteFormProps) {
   return (
     <Formik
       initialValues={initialValues}
@@ -63,9 +64,14 @@ export default function NoteForm({ onSubmit }: Props) {
             )}
           </label>
 
-          <button type="submit" className={css.button}>
-            Create note
-          </button>
+          <div className={css.actions}>
+            <button type="submit" className={css.button}>
+              Create note
+            </button>
+            <button type="button" onClick={onCancel} className={css.cancel}>
+              Cancel
+            </button>
+          </div>
         </Form>
       )}
     </Formik>
