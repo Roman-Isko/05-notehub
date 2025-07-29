@@ -1,37 +1,31 @@
-import { useState } from "react";
-import type { KeyboardEvent } from "react";
-import toast from "react-hot-toast";
+import type { FormEvent } from "react";
 import css from "./SearchBox.module.css";
 
-interface SearchBoxProps {
+type Props = {
+  value: string;
+  onChange: (value: string) => void;
   onSearch: (query: string) => void;
-}
+};
 
-export default function SearchBox({ onSearch }: SearchBoxProps) {
-  const [inputValue, setInputValue] = useState("");
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      const trimmed = inputValue.trim();
-
-      if (!trimmed) {
-        toast.error("Введи текст для пошуку!");
-        return;
-      }
-
-      onSearch(trimmed);
-      setInputValue("");
+const SearchBox = ({ value, onChange, onSearch }: Props) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (value.trim()) {
+      onSearch(value.trim());
     }
   };
 
   return (
-    <input
-      className={css.input}
-      type="text"
-      placeholder="Search notes"
-      value={inputValue}
-      onChange={(e) => setInputValue(e.target.value)}
-      onKeyDown={handleKeyDown}
-    />
+    <form className={css.form} onSubmit={handleSubmit}>
+      <input
+        className={css.input}
+        type="text"
+        placeholder="Search notes..."
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </form>
   );
-}
+};
+
+export default SearchBox;

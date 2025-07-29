@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@uidotdev/usehooks";
 import { Toaster } from "react-hot-toast";
@@ -18,6 +18,7 @@ import css from "./App.module.css";
 function App() {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
+  const [inputValue, setInputValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
   const debouncedSearch = useDebounce(search, 500);
@@ -32,10 +33,19 @@ function App() {
     placeholderData: (prev) => prev ?? undefined,
   });
 
+  const handleSearch = (query: string) => {
+    setSearch(query);
+    setInputValue(""); // очищення input-а після натискання Enter
+  };
+
   return (
     <div className={css.container}>
       <Toaster />
-      <SearchBox onSearch={(query) => setSearch(query)} />
+      <SearchBox
+        value={inputValue}
+        onChange={setInputValue}
+        onSearch={handleSearch}
+      />
 
       <button onClick={() => setIsOpen(true)} className={css.button}>
         Create note+
@@ -43,15 +53,13 @@ function App() {
 
       {isPending && <Loader />}
       {isError && <ErrorMessage />}
-      {data && (
-        <>
-          <NoteList notes={data.notes} />
-          <Pagination
-            forcePage={page}
-            pageCount={data.totalPages}
-            onPageChange={({ selected }) => setPage(selected)}
-          />
-        </>
+      {data && data.notes.length > 0 && <NoteList notes={data.notes} />}
+      {data && data.totalPages > 1 && (
+        <Pagination
+          forcePage={page}
+          pageCount={data.totalPages}
+          onPageChange={({ selected }) => setPage(selected)}
+        />
       )}
 
       {isOpen && (
