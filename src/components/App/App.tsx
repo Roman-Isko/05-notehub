@@ -16,36 +16,29 @@ import Modal from "../Modal/Modal";
 import css from "./App.module.css";
 
 function App() {
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [inputValue, setInputValue] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
   const [isOpen, setIsOpen] = useState(false);
 
-  const debouncedSearch = useDebounce(search, 500);
-
   useEffect(() => {
-    setPage(0);
+    setPage(1);
   }, [debouncedSearch]);
 
   const { data, isPending, isError } = useQuery({
     queryKey: ["notes", page, debouncedSearch],
-    queryFn: () => fetchNotes(page + 1, debouncedSearch),
+    queryFn: () => fetchNotes(page, debouncedSearch),
     placeholderData: (prev) => prev ?? undefined,
   });
 
   const handleSearch = (query: string) => {
     setSearch(query);
-    setInputValue(""); // очищення input-а після натискання Enter
   };
 
   return (
     <div className={css.container}>
       <Toaster />
-      <SearchBox
-        value={inputValue}
-        onChange={setInputValue}
-        onSearch={handleSearch}
-      />
+      <SearchBox onSearch={handleSearch} />
 
       <button onClick={() => setIsOpen(true)} className={css.button}>
         Create note+
@@ -56,9 +49,9 @@ function App() {
       {data && data.notes.length > 0 && <NoteList notes={data.notes} />}
       {data && data.totalPages > 1 && (
         <Pagination
-          forcePage={page}
+          forcePage={page - 1}
           pageCount={data.totalPages}
-          onPageChange={({ selected }) => setPage(selected)}
+          onPageChange={({ selected }) => setPage(selected + 1)}
         />
       )}
 
